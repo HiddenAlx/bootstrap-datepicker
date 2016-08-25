@@ -1679,7 +1679,7 @@
 		datesDisabled: [],
 		endDate: Infinity,
 		forceParse: true,
-		format: 'mm/dd/yyyy',
+		format: 'dd-MMM-yyyy',
 		keepEmptyValues: false,
 		keyboardNavigation: true,
 		language: 'en',
@@ -1722,7 +1722,7 @@
 			monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 			today: "Today",
 			clear: "Clear",
-			titleFormat: "MM yyyy"
+			titleFormat: "MMMM yyyy"
 		}
 	};
 
@@ -1758,7 +1758,7 @@
 				navStep: 1000
 			}
 		],
-		validParts: /dd?|DD?|mm?|MM?|yy(?:yy)?/g,
+		validParts: /dd?|DD?|M{1,4}|yy(?:yy)?/g,
 		nonpunctuation: /[^ -\/:-@\u5e74\u6708\u65e5\[-`{-~\t\n\r]+/g,
 		parseFormat: function(format){
 			if (typeof format.toValue === 'function' && typeof format.toDisplay === 'function')
@@ -1828,12 +1828,12 @@
 			}
 
 			var parsed = {},
-				setters_order = ['yyyy', 'yy', 'M', 'MM', 'm', 'mm', 'd', 'dd'],
+				setters_order = ['yyyy', 'yy', 'MMM', 'MMMM', 'M', 'MM', 'd', 'dd'],
 				setters_map = {
 					yyyy: function(d,v){
 						return d.setUTCFullYear(assumeNearby ? applyNearbyYear(v, assumeNearby) : v);
 					},
-					m: function(d,v){
+					M: function(d,v){
 						if (isNaN(d))
 							return d;
 						v -= 1;
@@ -1850,7 +1850,7 @@
 				},
 				val, filtered;
 			setters_map['yy'] = setters_map['yyyy'];
-			setters_map['M'] = setters_map['MM'] = setters_map['mm'] = setters_map['m'];
+			setters_map['MMM'] = setters_map['MMMM'] = setters_map['MM'] = setters_map['M'];
 			setters_map['dd'] = setters_map['d'];
 			date = UTCToday();
 			var fparts = format.parts.slice();
@@ -1873,11 +1873,11 @@
 					part = fparts[i];
 					if (isNaN(val)){
 						switch (part){
-							case 'MM':
+							case 'MMMM':
 								filtered = $(dates[language].months).filter(match_part);
 								val = $.inArray(filtered[0], dates[language].months) + 1;
 								break;
-							case 'M':
+							case 'MMM':
 								filtered = $(dates[language].monthsShort).filter(match_part);
 								val = $.inArray(filtered[0], dates[language].monthsShort) + 1;
 								break;
@@ -1909,14 +1909,14 @@
 				d: date.getUTCDate(),
 				D: dates[language].daysShort[date.getUTCDay()],
 				DD: dates[language].days[date.getUTCDay()],
-				m: date.getUTCMonth() + 1,
-				M: dates[language].monthsShort[date.getUTCMonth()],
-				MM: dates[language].months[date.getUTCMonth()],
+				M: date.getUTCMonth() + 1,
+				MMM: dates[language].monthsShort[date.getUTCMonth()],
+				MMMM: dates[language].months[date.getUTCMonth()],
 				yy: date.getUTCFullYear().toString().substring(2),
 				yyyy: date.getUTCFullYear()
 			};
 			val.dd = (val.d < 10 ? '0' : '') + val.d;
-			val.mm = (val.m < 10 ? '0' : '') + val.m;
+			val.MM = (val.M < 10 ? '0' : '') + val.M;
 			date = [];
 			var seps = $.extend([], format.separators);
 			for (var i=0, cnt = format.parts.length; i <= cnt; i++){
